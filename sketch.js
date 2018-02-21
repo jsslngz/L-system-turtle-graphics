@@ -1,22 +1,20 @@
-// variables : X F
+// variables : F
 // constants : + − [ ]
-// start  : X
-// rules  : (X → F[−X][X]F[−X]+FX), (F → FF)
+// start  : F
+// rules  : (F → FF+[+F-F-F]-[-F+F+F])
 // angle  : 25°
-let axiom = "X";
+
+let angle;
+let axiom = "F";
 let sentence = axiom;
-let len = 40;
+let len = 50;
 let rules = [{
-    if: "X",
-    then: "F[−X][X]F[−X]+FX"
-  },
-  {
     if: "F",
-    then: "FF"
-  }
-];
+    then: "FF+[+F-F-F]-[-F+F+F]"
+  }];
 
 function setup() {
+  angle = radians(25);
   createCanvas(600, 400);
   background(215);
   generateTree();
@@ -29,10 +27,15 @@ function mouseClicked() {
 function generateTree() {
   nextSentence = "";
   for (let c of sentence) {
+    var found = false;
     for (let rule of rules) {
       if (rule.if === c) {
+        found = true;
         nextSentence += rule.then;
       }
+    }
+    if(!found){
+      nextSentence += c;
     }
   }
   sentence = nextSentence;
@@ -41,12 +44,22 @@ function generateTree() {
 }
 
 function drawTree() {
+  resetMatrix();
   translate(width / 2, height)
-  stroke(256);
+  var r = random(50);
+  stroke(r * 5);;
   for (c of sentence) {
     if (c === "F") {
       line(0, 0, 0, -len);
       translate(0, -len)
+    }else if (c === "+") {
+      rotate(angle)
+    }else if (c === "-") {
+      rotate(-angle)
+    }else if (c === "[") {
+      push();
+    }else if (c === "]") {
+      pop();
     }
   }
 	len *= 0.5;
